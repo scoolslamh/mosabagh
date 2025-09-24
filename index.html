@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اليوم الوطني 95 - عز الوطن</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Tajawal', sans-serif; }
+
+    /* 🎯 المؤشر */
+    .pointer {
+      position: relative;
+      margin: 0 auto;
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 25px solid #facc15; /* ذهبي */
+      z-index: 20;
+    }
+
+    /* 🎠 الشريط */
+    #strip {
+      display: flex;
+      gap: 20px;
+      transition: transform 1.5s cubic-bezier(0.25, 0.8, 0.5, 1); /* أسرع */
+    }
+    .item {
+      min-width: 120px;
+      padding: 20px;
+      background: #006c35;
+      color: white;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* ✨ حركة فلاش للبطاقة */
+    .flash {
+      animation: flash 1s ease-in-out infinite alternate;
+    }
+    @keyframes flash {
+      from { background-color: #facc15; color: #13344F; }
+      to { background-color: #fde68a; color: #006c35; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-[#e8f5e9] to-[#f5deb3] flex flex-col items-center justify-center min-h-screen p-4">
+
+  <!-- ✅ العنوان -->
+  <h1 class="text-2xl md:text-4xl font-bold text-[#006c35] mb-6">
+    🇸🇦 اليوم الوطني 95 - عز الوطن
+  </h1>
+
+  <!-- ✅ زر التشغيل -->
+  <button id="spinBtn" class="bg-[#006c35] text-white px-6 py-3 rounded-xl shadow-md hover:bg-green-700 transition">
+    🎯 جرّب حظك
+  </button>
+
+  <!-- ✅ المؤشر -->
+  <div class="pointer mt-6"></div>
+
+  <!-- ✅ منطقة العرض -->
+  <div class="relative mt-2 w-full max-w-md overflow-hidden border-4 border-[#006c35] rounded-xl bg-white">
+    <div id="strip" class="p-4 flex">
+      <!-- يتم ملء العناصر عبر JS -->
+    </div>
+  </div>
+
+  <!-- ✅ البطاقة الفائزة -->
+  <div id="winnerCard" class="hidden mt-6 p-6 rounded-xl text-2xl font-bold shadow-lg flash"></div>
+
+  <!-- ✅ زر إعادة -->
+  <button id="retryBtn" class="hidden mt-6 bg-[#facc15] text-[#13344F] px-5 py-2 rounded-lg shadow-md hover:bg-yellow-400 transition">
+    🔄 إعادة المحاولة
+  </button>
+
+  <script>
+    const strip = document.getElementById("strip");
+    const spinBtn = document.getElementById("spinBtn");
+    const retryBtn = document.getElementById("retryBtn");
+    const winnerCard = document.getElementById("winnerCard");
+
+    // 🎁 الجوائز
+    const options = [
+      "🌟 مبخرة الخريطة",
+      "🔥 مبخرة عيدان",
+      "🎁 على ذوقنا نعطيك",
+      "❌ حظ أوفر",
+      "🌹 وردة لك تستاهل",
+      "🇸🇦 يوم وطني سعيد",
+      "😔 للأسف خيرها بغيرها",
+      "🖊️ قلم",
+      "📓 دفتر"
+    ];
+
+    // تكرار الجوائز لزيادة طول الشريط
+    const repeatedOptions = [...options, ...options, ...options];
+    repeatedOptions.forEach(opt => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerText = opt;
+      strip.appendChild(div);
+    });
+
+    // عند الضغط
+    spinBtn.onclick = () => {
+      const items = document.querySelectorAll(".item");
+      const randomIndex = Math.floor(Math.random() * options.length); // اختيار جائزة
+      const targetItem = items[randomIndex + options.length]; // وسط الشريط
+
+      // حساب المسافة لإيقاف الشريط
+      const containerCenter = strip.parentElement.offsetWidth / 2;
+      const itemCenter = targetItem.offsetLeft + targetItem.offsetWidth / 2;
+      const moveX = containerCenter - itemCenter;
+
+      strip.style.transform = `translateX(${moveX}px)`;
+
+      // بعد التوقف
+      setTimeout(() => {
+        // إخفاء الشريط
+        strip.parentElement.style.display = "none";
+
+        // عرض البطاقة الفائزة (الجائزة فقط بدون نص إضافي)
+        winnerCard.innerText = options[randomIndex];
+        winnerCard.classList.remove("hidden");
+
+        // إظهار زر إعادة
+        retryBtn.classList.remove("hidden");
+      }, 1600); // متزامنة مع مدة الحركة
+    };
+
+    // إعادة الصفحة
+    retryBtn.onclick = () => {
+      // إعادة إظهار الشريط
+      strip.parentElement.style.display = "block";
+      strip.style.transform = "translateX(0px)";
+      winnerCard.classList.add("hidden");
+      retryBtn.classList.add("hidden");
+    };
+  </script>
+</body>
+</html>
